@@ -1,0 +1,9 @@
+{
+  "name": "saferent-sf-monorepo",
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && flask run"
+  }
+} 

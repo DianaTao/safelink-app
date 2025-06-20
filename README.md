@@ -1,167 +1,103 @@
-# SafeLink App
+# SafeRent SF
 
-A Flask-based web application designed to connect vulnerable populations with essential resources, support services, and emergency assistance.
+A modern, AI-powered web app for safe, affordable housing search in San Francisco.
 
-## Features
-
-- **Authentication & Authorization**: Secure user management with Supabase
-- **AI-Powered Assistance**: Claude AI integration for intelligent resource matching
-- **Resource Management**: Comprehensive database of shelters, food banks, legal aid, and support services
-- **Emergency Alerts**: Real-time notification system for crisis situations
-- **Case Management**: Track help requests and support cases
-- **Multi-Role Support**: Volunteers, social workers, and service providers
-- **Geolocation Services**: Mapbox integration for location-based services
-- **SMS Notifications**: Twilio integration for emergency communications
-
-## Project Structure
+## 🗂️ Project Structure
 
 ```
-safelink-app/
-├── app/                      # Flask application package
-│   ├── __init__.py           # App factory, load config
-│   ├── config.py             # Configuration settings
-│   ├── routes/               # Flask Blueprints
+saferent-sf/
+├── frontend/                     # React web frontend (Next.js)
+│   ├── public/                   # Static assets
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── components/           # Reusable UI components
+│   │   │   ├── MapView.tsx       # Mapbox heatmap + rentals
+│   │   │   ├── ListingCard.tsx   # Rental info card
+│   │   │   ├── VoiceSearch.tsx   # Vapi integration
+│   │   │   └── Header.tsx
+│   │   ├── pages/
+│   │   │   ├── index.tsx         # Main landing/map page
+│   │   │   ├── saved.tsx         # Saved rentals
+│   │   │   └── login.tsx         # Supabase auth
+│   │   ├── lib/                  # Utility libraries
+│   │   │   ├── supabaseClient.ts # Auth + DB connection
+│   │   │   ├── apiClient.ts      # Wrapper for calling Flask backend
+│   │   │   └── mapbox.ts         # Mapbox init config
+│   │   ├── styles/
+│   │   │   └── globals.css
+│   │   └── app.tsx
+│   ├── .env.local                # Mapbox, Supabase keys
+│   └── next.config.js
+│
+├── backend/                      # Flask backend API
+│   ├── app/
 │   │   ├── __init__.py
-│   │   ├── auth.py           # Supabase auth endpoints
-│   │   ├── ai.py             # Claude assistant endpoints
-│   │   ├── resources.py      # Map data, shelter, food, legal, etc.
-│   │   ├── alerts.py         # Emergency notification system
-│   │   ├── users.py          # Profile, volunteer, social worker roles
-│   │   └── cases.py          # Help request / case management
-│   ├── services/             # API clients and integrations
-│   │   ├── supabase.py       # Supabase auth and DB wrapper
-│   │   ├── claude_api.py     # Claude API call wrapper
-│   │   ├── mapbox.py         # Mapbox integration
-│   │   ├── sms.py            # Twilio integration for SMS
-│   │   └── risk_model.py     # Optional ML risk scoring logic
-│   ├── models/               # ORM models (SQLAlchemy or Supabase client)
-│   │   ├── user.py
-│   │   ├── shelter.py
-│   │   ├── help_request.py
-│   │   └── case.py
-│   ├── templates/            # HTML templates (optional)
-│   └── static/               # Static assets (optional)
-├── migrations/               # Alembic DB migrations
-├── scripts/                  # Scripts for seeding, testing, CLI tools
-├── tests/                    # Unit & integration tests
-├── .env                      # Environment variables
-├── .flaskenv                 # Flask environment settings
-├── requirements.txt          # Python dependencies
-├── run.py                    # App entry point
-└── README.md                 # Project overview
+│   │   ├── routes/
+│   │   │   ├── rentals.py        # Craigslist scraping & parsing
+│   │   │   ├── crime.py          # SF crime data API access
+│   │   │   ├── ai.py             # Claude AI summaries
+│   │   │   └── alerts.py         # Orkes workflow alerts
+│   │   ├── services/
+│   │   │   ├── scraper.py        # Craigslist scraping logic
+│   │   │   ├── crime_data.py     # SFPD data fetcher
+│   │   │   ├── claude_client.py  # Claude API handler
+│   │   │   └── map_utils.py
+│   │   ├── utils/
+│   │   │   └── geo.py
+│   │   └── main.py               # Flask entrypoint
+│   ├── requirements.txt
+│   ├── config.py
+│   └── .env                      # Claude API, Supabase secrets
+│
+├── database/                     # SQL or Supabase schema reference
+│   └── schema.sql
+│
+├── workflows/                    # Orkes / Lambda / cron tasks
+│   ├── notify_crime_alert.py
+│   └── daily_scrape_task.py
+│
+├── docs/
+│   ├── design_doc.md
+│   └── sponsor_mapping.md
+│
+├── README.md
+├── .gitignore
+└── package.json                  # Monorepo tool like Turbo or custom script
 ```
 
-## Setup Instructions
+## 🛠 Tech Stack
 
-### Prerequisites
+| Area              | Tech/Platform                                      |
+| ----------------- | -------------------------------------------------- |
+| **Frontend**      | Next.js (React, TailwindCSS), Vercel               |
+| **Backend**       | Flask (Python), Fly.io or Lambda                   |
+| **Database/Auth** | Supabase (PostgreSQL + Auth)                       |
+| **Maps**          | Mapbox                                             |
+| **AI**            | Claude API                                         |
+| **Voice**         | Vapi (voice-to-AI)                                 |
+| **Workflows**     | Orkes (crime alert pipelines, scheduled tasks)      |
 
-- Python 3.8+
-- PostgreSQL database
-- Supabase account
-- Claude API key
-- Mapbox access token
-- Twilio account (for SMS features)
+## 🧪 Dev Tools
 
-### Installation
+| Tool           | Role                             |
+| -------------- | -------------------------------- |
+| **Vercel**     | Deploy `frontend/` (Next.js app) |
+| **Fly.io**     | Deploy `backend/` (Flask API)    |
+| **Supabase**   | Auth, user db, saved listings    |
+| **Mapbox**     | Safety heatmap + rentals map     |
+| **Claude API** | AI summaries, neighborhood tips  |
+| **Vapi**       | Voice-to-AI interface            |
+| **Orkes**      | Crime alert pipelines (optional) |
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd safelink-app
-   ```
+## 🚀 Quick Start
 
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+1. Clone the repo: `git clone ...`
+2. Install frontend deps: `cd frontend && npm install`
+3. Install backend deps: `cd backend && pip install -r requirements.txt`
+4. Set up `.env.local` and `.env` files for secrets
+5. Run frontend: `npm run dev` (in `frontend/`)
+6. Run backend: `flask run` (in `backend/`)
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-4. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your actual API keys and configuration
-   ```
-
-5. **Initialize database**
-   ```bash
-   flask db init
-   flask db migrate
-   flask db upgrade
-   ```
-
-6. **Run the application**
-   ```bash
-   python run.py
-   ```
-
-## API Endpoints
-
-### Authentication
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `POST /auth/logout` - User logout
-- `GET /auth/profile` - Get user profile
-
-### AI Assistant
-- `POST /ai/chat` - Chat with Claude AI
-- `POST /ai/analyze` - Analyze help request
-- `GET /ai/suggestions` - Get resource suggestions
-
-### Resources
-- `GET /resources/shelters` - List shelters
-- `GET /resources/food` - List food banks
-- `GET /resources/legal` - List legal aid services
-- `POST /resources/search` - Search resources by location
-
-### Alerts
-- `POST /alerts/emergency` - Send emergency alert
-- `GET /alerts/active` - Get active alerts
-- `PUT /alerts/<id>/resolve` - Resolve alert
-
-### Users
-- `GET /users/profile` - Get user profile
-- `PUT /users/profile` - Update user profile
-- `GET /users/volunteers` - List volunteers
-- `GET /users/social-workers` - List social workers
-
-### Cases
-- `POST /cases/create` - Create help request
-- `GET /cases/<id>` - Get case details
-- `PUT /cases/<id>` - Update case
-- `GET /cases/assigned` - Get assigned cases
-
-## Testing
-
-Run the test suite:
-```bash
-pytest
-```
-
-Run with coverage:
-```bash
-pytest --cov=app tests/
-```
-
-## Deployment
-
-### Production Setup
-
-1. Set `FLASK_ENV=production` in environment
-2. Configure production database
-3. Set up proper logging
-4. Use Gunicorn for WSGI server:
-   ```bash
-   gunicorn -w 4 -b 0.0.0.0:5000 run:app
-   ```
-
-### Docker Deployment
-
-```bash
-docker build -t safelink-app .
-docker run -p 5000:5000 safelink-app
-```
+For more, see `docs/design_doc.md` and the code in each subfolder. 
