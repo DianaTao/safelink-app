@@ -13,12 +13,9 @@ export default function HomePage() {
             Find safe and affordable rental properties in San Francisco with real-time crime data and neighborhood insights.
           </p>
           
-          <div className="mt-8 flex justify-center space-x-4">
+          <div className="mt-8 flex justify-center">
             <Link href="/login" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
               Get Started
-            </Link>
-            <Link href="/debug" className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-              Debug Info
             </Link>
           </div>
           
