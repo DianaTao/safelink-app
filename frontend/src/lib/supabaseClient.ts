@@ -4,6 +4,16 @@ const supabaseUrl = 'https://ccotkrhrqkldgfdjnlea.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceKey = process.env.SUPABASE_KEY
 
+// Mock PostgrestFilterBuilder for SSR/build
+const mockPostgrestBuilder = {
+  eq: () => ({
+    single: () => Promise.resolve({ data: null, error: null }),
+    limit: () => Promise.resolve({ data: null, error: null }),
+  }),
+  single: () => Promise.resolve({ data: null, error: null }),
+  limit: () => Promise.resolve({ data: null, error: null }),
+};
+
 // Only create Supabase client if we're in the browser and have the key
 const createSupabaseClient = () => {
   if (typeof window === 'undefined') {
@@ -17,11 +27,7 @@ const createSupabaseClient = () => {
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
       },
       from: () => ({
-        select: () => ({
-          eq: () => Promise.resolve({ data: null, error: null }),
-          limit: () => Promise.resolve({ data: null, error: null }),
-          single: () => Promise.resolve({ data: null, error: null })
-        }),
+        select: () => mockPostgrestBuilder,
         insert: () => Promise.resolve({ data: null, error: null })
       })
     }
