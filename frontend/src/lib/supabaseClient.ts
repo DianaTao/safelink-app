@@ -27,7 +27,14 @@ const createSupabaseClient = () => {
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
       },
       from: () => ({
-        select: () => mockPostgrestBuilder,
+        select: () => ({
+          eq: () => ({
+            single: () => Promise.resolve({ data: null, error: null }),
+            limit: () => Promise.resolve({ data: null, error: null })
+          }),
+          single: () => Promise.resolve({ data: null, error: null }),
+          limit: () => Promise.resolve({ data: null, error: null })
+        }),
         insert: () => Promise.resolve({ data: null, error: null })
       })
     }
@@ -74,13 +81,17 @@ export const database = {
   
   // Example: Save a rental listing
   saveRental: (rentalData: any) =>
-    supabase?.from('saved_rentals').insert(rentalData) || Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } }),
-  
-  // Example: Get user profile
-  getUserProfile: (userId: string) => {
-    if (!supabase) {
-      return Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } })
-    }
+    supabase?.from('saved_rentals').insert(rentalData) || Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } })
+}
+
+// Separate function for getting user profile to avoid TypeScript issues
+export const getUserProfile = (userId: string) => {
+  if (!supabase) {
+    return Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } })
+  }
+  try {
     return supabase.from('profiles').select('*').eq('id', userId).single()
+  } catch (error) {
+    return Promise.resolve({ data: null, error: { message: 'Supabase query failed' } })
   }
 } 
