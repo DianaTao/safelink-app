@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 export default function TestSupabasePage() {
   const [status, setStatus] = useState('Testing...');
-  const [error, setError] = useState<string | null>(null);
-  const [supabase, setSupabase] = useState<any>(null);
+  const [error, setError] = useState(null);
+  const [supabase, setSupabase] = useState(null);
 
   useEffect(() => {
     // Only import Supabase client on the client side

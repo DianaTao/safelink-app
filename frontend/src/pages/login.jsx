@@ -4,7 +4,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [auth, setAuth] = useState<any>(null);
+  const [auth, setAuth] = useState(null);
 
   useEffect(() => {
     // Only import Supabase client on the client side
@@ -15,7 +15,7 @@ export default function LoginPage() {
     }
   }, []);
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     if (!auth) return;
     

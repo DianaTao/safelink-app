@@ -4,16 +4,6 @@ const supabaseUrl = 'https://ccotkrhrqkldgfdjnlea.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceKey = process.env.SUPABASE_KEY
 
-// Mock PostgrestFilterBuilder for SSR/build
-const mockPostgrestBuilder = {
-  eq: () => ({
-    single: () => Promise.resolve({ data: null, error: null }),
-    limit: () => Promise.resolve({ data: null, error: null }),
-  }),
-  single: () => Promise.resolve({ data: null, error: null }),
-  limit: () => Promise.resolve({ data: null, error: null }),
-};
-
 // Only create Supabase client if we're in the browser and have the key
 const createSupabaseClient = () => {
   if (typeof window === 'undefined') {
@@ -58,10 +48,10 @@ export const supabaseAdmin = typeof window === 'undefined' && supabaseServiceKey
 
 // Helper functions for common operations
 export const auth = {
-  signUp: (email: string, password: string) => 
+  signUp: (email, password) => 
     supabase?.auth.signUp({ email, password }) || Promise.resolve({ error: { message: 'Supabase not initialized' } }),
   
-  signIn: (email: string, password: string) => 
+  signIn: (email, password) => 
     supabase?.auth.signInWithPassword({ email, password }) || Promise.resolve({ error: { message: 'Supabase not initialized' } }),
   
   signOut: () => 
@@ -70,22 +60,22 @@ export const auth = {
   getUser: () => 
     supabase?.auth.getUser() || Promise.resolve({ user: null, error: { message: 'Supabase not initialized' } }),
   
-  onAuthStateChange: (callback: any) => 
+  onAuthStateChange: (callback) => 
     supabase?.auth.onAuthStateChange(callback) || { data: { subscription: { unsubscribe: () => {} } } }
 }
 
 export const database = {
   // Example: Get saved rentals for a user
-  getSavedRentals: (userId: string) =>
+  getSavedRentals: (userId) =>
     supabase?.from('saved_rentals').select('*').eq('user_id', userId) || Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } }),
   
   // Example: Save a rental listing
-  saveRental: (rentalData: any) =>
+  saveRental: (rentalData) =>
     supabase?.from('saved_rentals').insert(rentalData) || Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } })
 }
 
 // Separate function for getting user profile to avoid TypeScript issues
-export const getUserProfile = (userId: string) => {
+export const getUserProfile = (userId) => {
   if (!supabase) {
     return Promise.resolve({ data: null, error: { message: 'Supabase not initialized' } })
   }
